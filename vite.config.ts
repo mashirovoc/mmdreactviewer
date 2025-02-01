@@ -1,14 +1,15 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
 export default defineConfig({
   server: {
     headers: {
       "*.wasm": {
-        "Content-Type": "application/wasm"
-      }
-    }
+        "Content-Type": "application/wasm",
+      },
+    },
   },
+  base: "./",
   optimizeDeps: {
-    exclude: ['babylon-mmd']
-  }
+    exclude: ["babylon-mmd"],
+  },
 });
