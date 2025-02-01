@@ -1,6 +1,6 @@
 {
   "homepage": "https://mashirovoc.github.io/mmdreactviewer/",
-  "name": "test-babylon-mmd",
+  "name": "mmdreactviewer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
