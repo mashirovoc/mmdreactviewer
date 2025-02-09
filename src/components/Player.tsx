@@ -24,8 +24,14 @@ import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Separator } from "./ui/separator";
 import { ToastAction } from "./ui/toast";
+interface ModelTypes {
+  q: string;
+  name: string;
+  type: string | null;
+  path: string;
+}
 
-const MODEL = [
+const MODEL: ModelTypes[] = [
   {
     q: "mikuBlk",
     name: "Miku",
@@ -38,30 +44,41 @@ const MODEL = [
     type: "White",
     path: "./models/Miku_White.bpmx",
   },
-  { q: "RinBlk", name: "Rin", type: "Black", path: "./models/Rin_Black.bpmx" },
-  { q: "RinWhi", name: "Rin", type: "White", path: "./models/Rin_White.bpmx" },
+  { q: "rinBlk", name: "Rin", type: "Black", path: "./models/Rin_Black.bpmx" },
+  { q: "rinWhi", name: "Rin", type: "White", path: "./models/Rin_White.bpmx" },
   {
-    q: "RukaBlk",
+    q: "rukaBlk",
     name: "Ruka",
     type: "Black",
     path: "./models/Ruka_Black.bpmx",
   },
   {
-    q: "RukaWhi",
+    q: "rukaWhi",
     name: "Ruka",
     type: "White",
     path: "./models/Ruka_White.bpmx",
   },
+  {
+    q: "gu",
+    name: "Gura",
+    type: null,
+    path: "./models/Gura.bpmx",
+  },
+  {
+    q: "po",
+    name: "Porka",
+    type: null,
+    path: "./models/Porka.bpmx",
+  },
 ];
-
 const PROJECTS = [
   {
-    q: "ca",
+    q: "cat",
     title: "Catch the Wave",
     path: {
-      dance: "./projects/ca/dance.bvmd",
-      camera: "./projects/ca/camera.bvmd",
-      sound: "./projects/ca/sound.mp3",
+      dance: "./projects/cat/dance.bvmd",
+      camera: "./projects/cat/camera.bvmd",
+      sound: "./projects/cat/sound.mp3",
       stage: null,
     },
   },
@@ -92,7 +109,7 @@ const PROJECTS = [
       dance: "./projects/pa/dance.bvmd",
       camera: "./projects/pa/camera.bvmd",
       sound: "./projects/pa/sound.mp3",
-      stage: null,
+      stage: "./projects/pa/stage.bpmx",
     },
   },
   {
@@ -115,15 +132,43 @@ const PROJECTS = [
       stage: null,
     },
   },
+  {
+    q: "can",
+    title: "Candy Candy",
+    path: {
+      dance: "./projects/can/dance.bvmd",
+      camera: "./projects/can/camera.bvmd",
+      sound: "./projects/can/sound.mp3",
+      stage: "./projects/can/stage.bpmx",
+    },
+  },
+  {
+    q: "car",
+    title: "Caramel Dansen",
+    path: {
+      dance: "./projects/car/dance.bvmd",
+      camera: "./projects/car/camera.bvmd",
+      sound: "./projects/car/sound.mp3",
+      stage: "./projects/car/stage.bpmx",
+    },
+  },
+  {
+    q: "cu",
+    title: "???",
+    path: {
+      dance: "./projects/cu/dance.bvmd",
+      camera: "./projects/cu/camera.bvmd",
+      sound: "./projects/cu/sound.mp3",
+      stage: null,
+    },
+  },
 ];
-
 interface ManualCameraInitialPosition {
   alpha: number;
   beta: number;
   radius: number;
   target: Vector3;
 }
-
 const Player = () => {
   const drawingAreaRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -149,25 +194,19 @@ const Player = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [progress, setProgress] = useState(0);
-
   const queryParams = new URLSearchParams(window.location.search);
   const initialProjectQ = queryParams.get("p") || "dr";
-  const initialModelQ = queryParams.get("m") || "RukaWhi";
-
+  const initialModelQ = queryParams.get("m") || "mikuWhi";
   const [selectedProjectQ, setSelectedProjectQ] =
     useState<string>(initialProjectQ);
   const [selectedModelQ, setSelectedModelQ] = useState<string>(initialModelQ);
-
   const [pendingProjectQ, setPendingProjectQ] = useState<string | null>(null);
   const [pendingModelQ, setPendingModelQ] = useState<string | null>(null);
-
   const selectedProject =
     PROJECTS.find((p) => p.q === selectedProjectQ) || PROJECTS[2];
   const selectedModel = MODEL.find((m) => m.q === selectedModelQ) || MODEL[5];
-
   const isDefaultSelection =
     queryParams.get("p") === null && queryParams.get("m") === null;
-
   useEffect(() => {
     if (isDefaultSelection) {
       document.title = "Welcome to MMDReactViewer";
@@ -178,12 +217,10 @@ const Player = () => {
       document.title = `${selectedProject.title} / ${selectedModel.name} (${selectedModel.type})`;
     }
   }, [isDefaultSelection, selectedProject, selectedModel]);
-
   useEffect(() => {
     if (isDefaultSelection) {
       return;
     }
-
     const interactionTimeout = setTimeout(() => {
       if (!hasInteracted) {
         toast({
@@ -196,37 +233,30 @@ const Player = () => {
         });
       }
     }, 3000);
-
     const handleInteraction = () => {
       if (!hasInteracted) {
         setHasInteracted(true);
         clearTimeout(interactionTimeout);
       }
     };
-
     window.addEventListener("click", handleInteraction);
     window.addEventListener("touchstart", handleInteraction);
-
     return () => {
       clearTimeout(interactionTimeout);
       window.removeEventListener("click", handleInteraction);
       window.removeEventListener("touchstart", handleInteraction);
     };
   }, [hasInteracted, toast, isDefaultSelection]);
-
   useEffect(() => {
     if (isDefaultSelection) {
       return;
     }
-
     const initializeEngine = async () => {
       if (!drawingAreaRef.current) {
         console.error("drawingAreaRef.current is null");
         return;
       }
-
       const canvas = drawingAreaRef.current;
-
       const engine = new Engine(canvas, true, {
         preserveDrawingBuffer: false,
         stencil: false,
@@ -234,7 +264,6 @@ const Player = () => {
         alpha: false,
         powerPreference: "high-performance",
       });
-
       const assets: AssetsPath = {
         modelFilePath: selectedModel.path,
         motionFilePath: selectedProject.path.dance,
@@ -242,16 +271,13 @@ const Player = () => {
         stageModelFilePath: selectedProject.path.stage,
         soundFilePath: selectedProject.path.sound,
       };
-
       const runtimeResult = await createBaseRuntime({
         canvas,
         engine,
         assets,
         sceneBuilder: { build: buildScene },
       });
-
       runtimeResult.run();
-
       const {
         mmdRuntime: r,
         audioPlayer: ap,
@@ -260,22 +286,18 @@ const Player = () => {
         setAutoCameraMode,
         setManualCameraMode,
       } = runtimeResult;
-
       setMmdRuntime(r);
       setAudioPlayer(ap);
       setManualCamera(mc);
       setManualCameraInitialPosition(mcip);
       setSetAutoCameraModeFunc(() => setAutoCameraMode);
       setSetManualCameraModeFunc(() => setManualCameraMode);
-
       window.addEventListener("resize", () => {
         engine.resize();
       });
     };
-
     initializeEngine().catch(console.error);
   }, [selectedModel, selectedProject, isDefaultSelection]);
-
   useEffect(() => {
     if (isPlaying && audioPlayer) {
       const updateProgress = () => {
@@ -293,7 +315,6 @@ const Player = () => {
       setProgress(0);
     }
   }, [isPlaying, audioPlayer]);
-
   const handlePlayPauseButtonClick = () => {
     if (audioPlayer && mmdRuntime) {
       if (isPlaying) {
@@ -308,7 +329,6 @@ const Player = () => {
       }
     }
   };
-
   const handleResetButtonClick = () => {
     if (audioPlayer && mmdRuntime && setAutoCameraModeFunc) {
       setIsPlaying(false);
@@ -321,7 +341,6 @@ const Player = () => {
       setAutoCameraModeFunc();
     }
   };
-
   const handleCameraModeButtonClick = () => {
     if (setManualCameraModeFunc && setAutoCameraModeFunc) {
       if (isManualCameraMode) {
@@ -333,7 +352,6 @@ const Player = () => {
       }
     }
   };
-
   const handleResetManualCameraButtonClick = () => {
     if (manualCamera && manualCameraInitialPosition) {
       manualCamera.alpha = manualCameraInitialPosition.alpha;
@@ -342,7 +360,6 @@ const Player = () => {
       manualCamera.target = manualCameraInitialPosition.target.clone();
     }
   };
-
   const handleApplyChange = () => {
     setSelectedProjectQ(pendingProjectQ || "dr");
     setSelectedModelQ(pendingModelQ || "RukaWhi");
@@ -355,7 +372,6 @@ const Player = () => {
     const newUrl = window.location.pathname + newQuery;
     window.location.href = newUrl;
   };
-
   if (isDefaultSelection) {
     return (
       <>
@@ -403,7 +419,8 @@ const Player = () => {
                         variant={pendingModelQ === v.q ? "default" : "ghost"}
                         onClick={() => setPendingModelQ(v.q)}
                       >
-                        {v.name} ({v.type})
+                        {v.name}
+                        {v.type != null && " / " + v.type}
                       </Button>
                     );
                   })}
@@ -421,7 +438,6 @@ const Player = () => {
       </>
     );
   }
-
   return (
     <>
       <div className="relative">
@@ -441,7 +457,6 @@ const Player = () => {
             </div>
             <div className="grid gap-1">
               <div className="text-lg font-semibold">Playing</div>
-
               <Progress value={progress} className="pointer-events-none" />
             </div>
             <div className="grid gap-1">
@@ -450,12 +465,10 @@ const Player = () => {
                 Current Control Mode: {isManualCameraMode ? "Manual" : "Auto"}
               </div>
             </div>
-
             <div className="grid gap-1">
               <Button onClick={handleCameraModeButtonClick} variant="secondary">
                 {isManualCameraMode ? "Auto" : "Manual"}
               </Button>
-
               {isManualCameraMode && (
                 <Button
                   onClick={handleResetManualCameraButtonClick}
@@ -473,7 +486,6 @@ const Player = () => {
                     Use this button in case of freezes
                   </div>
                 </div>
-
                 <Button onClick={handleResetButtonClick} variant="destructive">
                   Initialise
                 </Button>
@@ -483,7 +495,6 @@ const Player = () => {
             <div className="text-lg font-semibold">
               Change Project and Model
             </div>
-
             <Button
               onClick={() => {
                 setMenuOpen(false);
@@ -493,7 +504,6 @@ const Player = () => {
             >
               Open Menu
             </Button>
-
             <SheetFooter>
               <SheetClose asChild>
                 <Button variant="outline">Close</Button>
@@ -539,7 +549,7 @@ const Player = () => {
                       variant={pendingModelQ === v.q ? "default" : "ghost"}
                       onClick={() => setPendingModelQ(v.q)}
                     >
-                      {v.name} ({v.type})
+                      {v.name} {v.type != null && " / " + v.type}
                     </Button>
                   );
                 })}
@@ -557,5 +567,4 @@ const Player = () => {
     </>
   );
 };
-
 export default Player;
