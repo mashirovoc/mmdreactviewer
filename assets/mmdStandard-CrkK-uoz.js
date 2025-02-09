@@ -1,4 +1,4 @@
-import{M as i,S as l,b as s,c as a}from"./index-zsBAJHMX.js";function f(o){return o.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}class d extends i{isCompatible(n){switch(n){case l.WGSL:return!0;default:return!1}}getCustomCode(n){if(n==="vertex"){const e={};return e.CUSTOM_VERTEX_DEFINITIONS=s,e[`!${f("finalWorld=finalWorld*influence;")}`]=`
+import{M as i,S as l,b as s,c as a}from"./index-CjA6CRfh.js";function f(o){return o.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}class d extends i{isCompatible(n){switch(n){case l.WGSL:return!0;default:return!1}}getCustomCode(n){if(n==="vertex"){const e={};return e.CUSTOM_VERTEX_DEFINITIONS=s,e[`!${f("finalWorld=finalWorld*influence;")}`]=`
 ${a}
 finalWorld=(finalWorld*influence);
 `,e}if(n==="fragment"){const e={};e.CUSTOM_FRAGMENT_DEFINITIONS=`
