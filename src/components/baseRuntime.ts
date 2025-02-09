@@ -1,4 +1,3 @@
-// baseRuntime.ts
 import type { Vector3 } from "@babylonjs/core";
 import { ArcRotateCamera } from "@babylonjs/core";
 import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
@@ -17,7 +16,7 @@ export interface ISceneBuilder {
     canvas: HTMLCanvasElement,
     engine: AbstractEngine,
     assets: AssetsPath,
-    onPlayProgress?: (progress: number) => void // Add onPlayProgress here if sceneBuilder needs to handle it, but likely not
+    onPlayProgress?: (progress: number) => void
   ): Promise<{
     scene: Scene;
     mmdRuntime: MmdWasmRuntime;
@@ -40,7 +39,7 @@ export interface BaseRuntimeInitParams {
   engine: AbstractEngine;
   assets: AssetsPath;
   sceneBuilder: ISceneBuilder;
-  onPlayProgress?: (progress: number) => void; // Add onPlayProgress here
+  onPlayProgress?: (progress: number) => void;
 }
 
 interface BaseRuntime {
@@ -64,13 +63,13 @@ interface BaseRuntime {
 export const createBaseRuntime = async (
   params: BaseRuntimeInitParams
 ): Promise<BaseRuntime> => {
-  const { canvas, engine, assets, sceneBuilder, onPlayProgress } = params; // Get onPlayProgress from params
+  const { canvas, engine, assets, sceneBuilder, onPlayProgress } = params;
   const sceneResult = await sceneBuilder.build(
     canvas,
     engine,
     assets,
     onPlayProgress
-  ); // Pass onPlayProgress to sceneBuilder.build if needed, but likely not
+  );
 
   const {
     scene,

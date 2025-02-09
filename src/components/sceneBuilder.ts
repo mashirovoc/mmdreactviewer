@@ -1,4 +1,3 @@
-// sceneBuilder.ts
 import type {
   AbstractEngine,
   ISceneLoaderProgressEvent,
@@ -377,7 +376,7 @@ const loadStageModel = async (
       return null;
     }
   } catch (error) {
-    console.error("loadStageModel: Error loading stage model:", error); // Keep error logging
+    console.error("loadStageModel: Error loading stage model:", error);
     return null;
   }
 };

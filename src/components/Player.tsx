@@ -57,7 +57,7 @@ const MODEL = [
 const PROJECTS = [
   {
     q: "ca",
-    title: "Catch the wave",
+    title: "Catch the Wave",
     path: {
       dance: "./projects/ca/dance.bvmd",
       camera: "./projects/ca/camera.bvmd",
@@ -77,7 +77,7 @@ const PROJECTS = [
   },
   {
     q: "dr",
-    title: "Dreaming chu chu",
+    title: "Dreaming Chuchu",
     path: {
       dance: "./projects/dr/dance.bvmd",
       camera: "./projects/dr/camera.bvmd",
@@ -151,28 +151,37 @@ const Player = () => {
   const [progress, setProgress] = useState(0);
 
   const queryParams = new URLSearchParams(window.location.search);
-  const initialProjectQ = queryParams.get("p") || "dr"; // default project
-  const initialModelQ = queryParams.get("m") || "MikuWhi"; // default model
+  const initialProjectQ = queryParams.get("p") || "dr";
+  const initialModelQ = queryParams.get("m") || "RukaWhi";
 
   const [selectedProjectQ, setSelectedProjectQ] =
     useState<string>(initialProjectQ);
   const [selectedModelQ, setSelectedModelQ] = useState<string>(initialModelQ);
 
-  // State for pending project and model changes in Drawer
-  const [pendingProjectQ, setPendingProjectQ] =
-    useState<string>(initialProjectQ);
-  const [pendingModelQ, setPendingModelQ] = useState<string>(initialModelQ);
+  const [pendingProjectQ, setPendingProjectQ] = useState<string | null>(null);
+  const [pendingModelQ, setPendingModelQ] = useState<string | null>(null);
 
   const selectedProject =
-    PROJECTS.find((p) => p.q === selectedProjectQ) || PROJECTS[2]; // Default to "Dreaming chu chu" if not found
-  const selectedModel = MODEL.find((m) => m.q === selectedModelQ) || MODEL[5]; // Default to "RukaWhi" if not found
+    PROJECTS.find((p) => p.q === selectedProjectQ) || PROJECTS[2];
+  const selectedModel = MODEL.find((m) => m.q === selectedModelQ) || MODEL[5];
 
   const isDefaultSelection =
     queryParams.get("p") === null && queryParams.get("m") === null;
 
   useEffect(() => {
     if (isDefaultSelection) {
-      return; // Skip interaction check and toast if default selection
+      document.title = "Welcome to MMDReactViewer";
+      setPendingProjectQ(null);
+      setPendingModelQ(null);
+      return;
+    } else {
+      document.title = `${selectedProject.title} / ${selectedModel.name} (${selectedModel.type})`;
+    }
+  }, [isDefaultSelection, selectedProject, selectedModel]);
+
+  useEffect(() => {
+    if (isDefaultSelection) {
+      return;
     }
 
     const interactionTimeout = setTimeout(() => {
@@ -207,7 +216,7 @@ const Player = () => {
 
   useEffect(() => {
     if (isDefaultSelection) {
-      return; // Skip engine initialization if default selection
+      return;
     }
 
     const initializeEngine = async () => {
@@ -265,7 +274,7 @@ const Player = () => {
     };
 
     initializeEngine().catch(console.error);
-  }, [selectedModel, selectedProject, isDefaultSelection]); // Re-run effect when selectedModel or selectedProject or isDefaultSelection changes
+  }, [selectedModel, selectedProject, isDefaultSelection]);
 
   useEffect(() => {
     if (isPlaying && audioPlayer) {
@@ -335,9 +344,14 @@ const Player = () => {
   };
 
   const handleApplyChange = () => {
-    setSelectedProjectQ(pendingProjectQ);
-    setSelectedModelQ(pendingModelQ);
-    const newQuery = `?p=${pendingProjectQ}&m=${pendingModelQ}`;
+    setSelectedProjectQ(pendingProjectQ || "dr");
+    setSelectedModelQ(pendingModelQ || "RukaWhi");
+    setPendingProjectQ(null);
+    setPendingModelQ(null);
+    setDrawerOpen(false);
+    const newQuery = `?p=${pendingProjectQ || "dr"}&m=${
+      pendingModelQ || "RukaWhi"
+    }`;
     const newUrl = window.location.pathname + newQuery;
     window.location.href = newUrl;
   };
@@ -425,9 +439,8 @@ const Player = () => {
                 {isPlaying ? "Pause" : "Play"}
               </Button>
             </div>
-
             <div className="grid gap-1">
-              <div className="text-lg font-semibold">Seeking</div>
+              <div className="text-lg font-semibold">Playing</div>
 
               <Progress value={progress} className="pointer-events-none" />
             </div>
