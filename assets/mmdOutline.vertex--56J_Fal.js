@@ -1,4 +1,4 @@
-import{Q as i}from"./index-D0eYalR6.js";const e="mmdOutlineVertexShader",n=`
+import{Q as i}from"./index-50ZvmoW1.js";const e="mmdOutlineVertexShader",n=`
 attribute position: vec3f;attribute normal: vec3f;
 #include<bonesDeclaration>
 #include<bakedVertexAnimationDeclaration>

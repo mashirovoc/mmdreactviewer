@@ -1,4 +1,4 @@
-import{Q as r}from"./index-D0eYalR6.js";const e="mmdOutlinePixelShader",n=`
+import{Q as r}from"./index-50ZvmoW1.js";const e="mmdOutlinePixelShader",n=`
 uniform color: vec4f;
 #ifdef ALPHATEST
 varying vUV: vec2;var diffuseSamplerSampler: sampler;var diffuseSampler: texture_2d<f32>;

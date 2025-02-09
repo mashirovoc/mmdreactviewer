@@ -1,4 +1,4 @@
-import{Q as t}from"./index-D0eYalR6.js";const e="textureAlphaCheckerPixelShader",r=`
+import{Q as t}from"./index-50ZvmoW1.js";const e="textureAlphaCheckerPixelShader",r=`
 var textureSamplerSampler: sampler;var textureSampler: texture_2d<f32>;varying vUv: vec2f;@fragment
 fn main(input: FragmentInputs)->FragmentOutputs {fragmentOutputs.color=vec4f(
 vec3f(1.0)-vec3f(textureSample(textureSampler,textureSamplerSampler,fragmentInputs.vUv).a),
