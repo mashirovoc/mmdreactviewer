@@ -70,6 +70,12 @@ const MODEL: ModelTypes[] = [
     type: null,
     path: "./models/Porka.bpmx",
   },
+  {
+    q: "to",
+    name: "Towa",
+    type: null,
+    path: "./models/Towa.bpmx",
+  },
 ];
 const PROJECTS = [
   {
